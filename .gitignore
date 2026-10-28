@@ -1,0 +1,15 @@
+# Dependencies and generated Next.js output
+web/node_modules/
+web/.next/
+web/.data/
+web/tsconfig.tsbuildinfo
+
+# Local environment secrets
+web/.env
+web/.env.local
+web/.env.*.local
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.vscode/

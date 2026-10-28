@@ -1,0 +1,109 @@
+/*
+ * Styles for the Prototype Testing Lab only. Every class is prefixed `proto-` so nothing here
+ * can change the admin dashboard.
+ */
+.proto-bg {
+  background:
+    radial-gradient(
+      1200px 500px at 0% -10%,
+      color-mix(in srgb, var(--primary) 14%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 400px at 100% 0%,
+      color-mix(in srgb, var(--good) 10%, transparent),
+      transparent 55%
+    ),
+    var(--background);
+}
+
+.proto-panel {
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.proto-panel:hover {
+  box-shadow: 0 6px 20px -8px rgba(16, 60, 32, 0.18);
+}
+
+@keyframes proto-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.proto-rise {
+  animation: proto-rise 0.35s ease-out both;
+}
+
+@keyframes proto-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.proto-pulse {
+  animation: proto-pulse 1.8s ease-out infinite;
+}
+
+.proto-bulb-on {
+  box-shadow:
+    0 0 0 6px rgba(255, 214, 90, 0.25),
+    0 0 36px 6px rgba(255, 196, 60, 0.45);
+}
+
+.proto-label {
+  will-change: transform;
+  transition: opacity 0.15s;
+}
+
+.proto-gauge-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.25rem;
+  text-align: center;
+}
+.proto-gauge-ring {
+  position: relative;
+  display: grid;
+  height: 8.5rem;
+  width: 8.5rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--surface);
+  box-shadow: 0 10px 24px -15px rgba(12, 62, 36, 0.36);
+}
+.proto-gauge-track,
+.proto-gauge-value {
+  fill: none;
+  stroke-width: 8;
+}
+.proto-gauge-track { stroke: color-mix(in srgb, var(--primary) 10%, #eef4ef); }
+.proto-gauge-value {
+  stroke: #09c94b;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.45s ease;
+}
+.proto-gauge-centre {
+  position: absolute;
+  display: flex;
+  width: 5.5rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.15rem;
+  color: var(--text);
+}
+.proto-gauge-centre svg { width: 100%; margin-bottom: 0.1rem; }
+.proto-gauge-value-text { font-size: 1.65rem; font-weight: 750; letter-spacing: -0.06em; line-height: 1; }
+.proto-gauge-unit { font-size: 0.85rem; font-weight: 650; color: var(--text-2); }
+.proto-gauge-card h3 { margin-top: 0.7rem; font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.proto-gauge-detail { margin-top: 0.2rem; max-width: 11rem; font-size: 0.72rem; line-height: 1.2; color: var(--good-fg); }
