@@ -17,6 +17,21 @@
     var(--background);
 }
 
+.proto-auth-bg {
+  background:
+    linear-gradient(110deg, rgba(10, 35, 22, 0.58), rgba(15, 49, 28, 0.16)),
+    url('/brand/greenhouse-vegetation.svg') center / cover fixed;
+}
+
+.proto-notifications {
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--surface) 91%, transparent),
+      color-mix(in srgb, var(--surface) 91%, transparent)
+    ),
+    url('/brand/greenhouse-vegetation.svg') center 62% / cover;
+}
+
 .proto-panel {
   transition:
     box-shadow 0.2s ease,
@@ -88,10 +103,12 @@
 }
 .proto-gauge-track { stroke: color-mix(in srgb, var(--primary) 10%, #eef4ef); }
 .proto-gauge-value {
-  stroke: #09c94b;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.45s ease;
 }
+.proto-gauge-value-good { stroke: var(--good); }
+.proto-gauge-value-bad { stroke: var(--critical); }
+.proto-gauge-value-idle { stroke: var(--muted); }
 .proto-gauge-centre {
   position: absolute;
   display: flex;
@@ -100,10 +117,9 @@
   align-items: baseline;
   justify-content: center;
   gap: 0.15rem;
-  color: var(--text);
 }
 .proto-gauge-centre svg { width: 100%; margin-bottom: 0.1rem; }
 .proto-gauge-value-text { font-size: 1.65rem; font-weight: 750; letter-spacing: -0.06em; line-height: 1; }
-.proto-gauge-unit { font-size: 0.85rem; font-weight: 650; color: var(--text-2); }
+.proto-gauge-unit { font-size: 0.85rem; font-weight: 650; }
 .proto-gauge-card h3 { margin-top: 0.7rem; font-size: 0.95rem; font-weight: 700; color: var(--text); }
-.proto-gauge-detail { margin-top: 0.2rem; max-width: 11rem; font-size: 0.72rem; line-height: 1.2; color: var(--good-fg); }
+.proto-gauge-detail { margin-top: 0.2rem; max-width: 11rem; font-size: 0.72rem; line-height: 1.2; }

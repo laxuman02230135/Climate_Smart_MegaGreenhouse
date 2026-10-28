@@ -1,10 +1,16 @@
 'use client';
 
-import { Box, FlaskConical, Info, Loader2, LogOut, X } from 'lucide-react';
+import { Bell, Box, Loader2, LogOut, Settings, UserRound, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { BrandMark } from '@/components/brand';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Select } from '@/components/ui/input';
 import { useNow } from '@/hooks/use-now';
 import { postJson } from '@/lib/api';
@@ -23,6 +29,7 @@ import type { MarkerId, SceneMarker, SceneZone } from './greenhouse-scene';
 import {
   LiveLightButton,
   LiveLightStatus,
+  LiveNotifications,
   LiveSensorCards,
   LiveStatusBar,
   LiveZonesPanel,
@@ -109,6 +116,8 @@ export function PrototypeDashboard() {
   const zone = live.selected;
   const [marker, setMarker] = useState<MarkerId | null>(null);
   const [leaving, setLeaving] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
 
   const gw = live.state?.gateway;
   const gatewayLink: LinkState =
@@ -138,19 +147,13 @@ export function PrototypeDashboard() {
   }
 
   return (
-    <div className="proto-bg min-h-dvh">
+    <div className="proto-auth-bg min-h-dvh">
       <header className="sticky top-0 z-30 border-b border-border bg-surface/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            <BrandMark className="size-11" priority />
-            <div className="min-w-0">
-              <h1 className="flex flex-wrap items-center gap-2 text-lg font-semibold leading-tight text-text">
-                Mega-Greenhouse
-              </h1>
-              <p className="truncate text-sm text-text-2">Greenhouse Sensor and Actuator Testing</p>
-            </div>
+          <div className="flex min-w-0 flex-1 items-center">
+            <BrandMark className="size-16 rounded-2xl p-1.5" priority />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <span
               className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-2"
               title="Judged from recent valid MQTT messages from this node."
@@ -172,25 +175,30 @@ export function PrototypeDashboard() {
                 <span className="text-muted"> (via MQTT)</span>
               </span>
             </span>
-            <Button variant="outline" size="sm" onClick={logout} disabled={leaving}>
-              {leaving ? (
-                <Loader2 className="animate-spin" aria-hidden="true" />
-              ) : (
-                <LogOut aria-hidden="true" />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setActivityOpen(true)}
+              aria-label="Notifications and recent activity"
+              title="Notifications and recent activity"
+              className="relative"
+            >
+              <Bell aria-hidden="true" />
+              {!!live.state?.events.length && (
+                <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-primary px-1 py-0.5 text-[10px] leading-none text-primary-fg">
+                  {live.state.events.length}
+                </span>
               )}
-              Log out
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setProfileOpen(true)}>
+              <UserRound aria-hidden="true" />
+              Profile
             </Button>
           </div>
         </div>
       </header>
 
       <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">
-        <p className="flex gap-2.5 rounded-xl border border-info-fg/20 bg-info-soft px-4 py-3 text-sm text-info-fg">
-          <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          Readings and light states come from the gateway over MQTT. A node shows Online only after
-          it sends valid messages, and a light shows ON or OFF only after the node confirms it.
-        </p>
-
         <LiveSensorCards zone={zone} now={now} />
 
         <div className="flex flex-col gap-6">
@@ -284,6 +292,51 @@ export function PrototypeDashboard() {
           Cloud.
         </footer>
       </main>
+      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+        <DialogContent closeLabel="Close profile">
+          <DialogTitle>Profile</DialogTitle>
+          <DialogDescription>Current prototype account information.</DialogDescription>
+          <dl className="mt-5 grid gap-3 text-sm">
+            <div className="rounded-lg bg-surface-2 p-3">
+              <dt className="text-xs text-text-2">Account type</dt>
+              <dd className="mt-1 font-medium text-text">Prototype test account</dd>
+            </div>
+            <div className="rounded-lg bg-surface-2 p-3">
+              <dt className="text-xs text-text-2">Access</dt>
+              <dd className="mt-1 font-medium text-text">Greenhouse testing dashboard</dd>
+            </div>
+          </dl>
+          <section className="mt-5 border-t border-border pt-5">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-text">
+              <Settings className="size-4" aria-hidden="true" />
+              Account settings
+            </h3>
+            <p className="mt-2 rounded-lg bg-info-soft p-3 text-sm text-info-fg">
+              Account preferences are not saved for prototype test accounts. Sensor thresholds and
+              automation options are managed separately for each zone from the Zones section.
+            </p>
+          </section>
+          <Button
+            className="mt-5 w-full"
+            variant="danger"
+            onClick={logout}
+            disabled={leaving}
+          >
+            {leaving ? (
+              <Loader2 className="animate-spin" aria-hidden="true" />
+            ) : (
+              <LogOut aria-hidden="true" />
+            )}
+            Log out
+          </Button>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={activityOpen} onOpenChange={setActivityOpen}>
+        <DialogContent closeLabel="Close notifications and recent activity">
+          <DialogTitle className="sr-only">Notifications and recent activity</DialogTitle>
+          <LiveNotifications state={live.state} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

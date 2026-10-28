@@ -1,6 +1,7 @@
 'use client';
 
-import { AlertTriangle, Eye, EyeOff, FlaskConical, Loader2 } from 'lucide-react';
+import { AlertTriangle, Eye, EyeOff, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { BrandMark } from '@/components/brand';
 import { Button } from '@/components/ui/button';
@@ -44,24 +45,17 @@ export function PrototypeLoginForm({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <main className="proto-bg relative grid min-h-dvh place-items-center px-4 py-10">
+    <main className="proto-auth-bg relative grid min-h-dvh place-items-center px-4 py-10">
       <div className="relative w-full max-w-sm">
-        <div className="mb-6 flex items-center gap-3">
-          <BrandMark className="size-14 rounded-2xl p-1.5" priority />
-          <div>
-            <p className="text-lg font-semibold leading-tight">Mega-Greenhouse</p>
-            <p className="text-sm text-text-2">Greenhouse Sensor and Actuator Testing</p>
-          </div>
+        <div className="mb-6 flex justify-center">
+          <BrandMark className="size-24 rounded-3xl bg-white/95 p-3 shadow-xl" priority />
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <div className="rounded-2xl border border-white/60 bg-surface/95 p-6 shadow-2xl backdrop-blur-md">
           <div className="flex items-center justify-between gap-2">
-            <h1 className="text-xl font-semibold">USER LOGIN</h1>
+            <h1 className="text-xl font-semibold">Welcome back</h1>
           </div>
-          <p className="mt-1 text-sm text-text-2">
-            Development-only test access. This is not the administrator sign-in and gives no admin
-            permissions.
-          </p>
+          <p className="mt-1 text-sm text-text-2">Sign in to your greenhouse workspace.</p>
 
           {!enabled ? (
             <div
@@ -128,8 +122,14 @@ export function PrototypeLoginForm({ enabled }: { enabled: boolean }) {
 
               <Button type="submit" size="lg" disabled={busy} className="mt-1 w-full">
                 {busy && <Loader2 className="animate-spin" aria-hidden="true" />}
-                {busy ? 'Signing in…' : 'Sign in to the lab'}
+                {busy ? 'Signing in…' : 'Sign in'}
               </Button>
+              <p className="text-center text-sm text-text-2">
+                New here?{' '}
+                <Link href="/prototype-testing/signup" className="font-semibold text-primary hover:underline">
+                  Create an account
+                </Link>
+              </p>
             </form>
           )}
         </div>

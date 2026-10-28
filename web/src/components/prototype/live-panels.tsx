@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Bell,
   CheckCircle2,
   Cpu,
   Droplets,
@@ -153,7 +154,6 @@ export function LiveStatusBar({ live, now }: { live: LiveState | null; now: numb
 function SensorCard({
   icon: Icon,
   title,
-  accent,
   kind,
   zone,
   status,
@@ -161,7 +161,6 @@ function SensorCard({
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
-  accent: string;
   kind: SensorKind;
   zone: ZoneState;
   status: (v: number) => { text: string; tone: keyof typeof TONE };
@@ -170,6 +169,20 @@ function SensorCard({
   const supported = zone.device.supportedSensors.includes(kind);
   const s = zone.sensors[kind];
   const st = s ? status(s.value) : null;
+  const toneClass =
+    st?.tone === 'bad'
+      ? 'text-critical-fg'
+      : st?.tone === 'good'
+        ? 'text-good-fg'
+        : st?.tone === 'warn'
+          ? 'text-warning-fg'
+          : 'text-muted';
+  const gaugeClass =
+    st?.tone === 'bad'
+      ? 'proto-gauge-value-bad'
+      : st?.tone === 'good'
+        ? 'proto-gauge-value-good'
+        : 'proto-gauge-value-idle';
   const range =
     kind === 'temperature'
       ? { min: 0, max: 50 }
@@ -196,7 +209,7 @@ function SensorCard({
           <circle className="proto-gauge-track" cx="56" cy="56" r={radius} />
           {s && (
             <circle
-              className="proto-gauge-value"
+              className={cn('proto-gauge-value', gaugeClass)}
               cx="56"
               cy="56"
               r={radius}
@@ -205,14 +218,14 @@ function SensorCard({
             />
           )}
         </svg>
-        <div className="proto-gauge-centre">
-          <Icon className={cn('size-4', accent)} />
+        <div className={cn('proto-gauge-centre', toneClass)}>
+          <Icon className="size-4" />
           <span className="proto-gauge-value-text">{value}</span>
           {s && <span className="proto-gauge-unit">{s.unit}</span>}
         </div>
       </div>
       <h3>{title}</h3>
-      <p className={cn('proto-gauge-detail', s?.freshness === 'stale' && 'text-muted')}>
+      <p className={cn('proto-gauge-detail', s?.freshness === 'stale' ? 'text-muted' : toneClass)}>
         {detail}
       </p>
     </article>
@@ -237,7 +250,6 @@ export function LiveSensorCards({ zone, now }: { zone: ZoneState | null; now: nu
           <SensorCard
             icon={Thermometer}
             title="Temperature"
-            accent="bg-critical-soft text-critical-fg"
             kind="temperature"
             zone={zone}
             now={now}
@@ -250,32 +262,53 @@ export function LiveSensorCards({ zone, now }: { zone: ZoneState | null; now: nu
           <SensorCard
             icon={Droplets}
             title="Soil Moisture"
-            accent="bg-info-soft text-info-fg"
             kind="soilMoisture"
             zone={zone}
             now={now}
             status={(v) =>
               v < zone.settings.soilDryBelow
-                ? { text: 'Dry', tone: 'warn' }
+                ? { text: 'Dry', tone: 'bad' }
                 : { text: 'Adequate', tone: 'good' }
             }
           />
           <SensorCard
             icon={Sun}
             title="Light Sensor (LDR)"
-            accent="bg-warning-soft text-warning-fg"
             kind="light"
             zone={zone}
             now={now}
             status={(v) =>
               v < zone.settings.lightThresholdAdc
-                ? { text: 'Below threshold', tone: 'warn' }
-                : { text: 'Above threshold', tone: 'info' }
+                ? { text: 'Below threshold', tone: 'bad' }
+                : { text: 'Above threshold', tone: 'good' }
             }
           />
         </div>
       )}
     </section>
+  );
+}
+
+export function LiveNotifications({ state }: { state: LiveState | null }) {
+  const events = state?.events ?? [];
+  return (
+    <Panel className="proto-notifications flex flex-col gap-3" aria-label="Notifications">
+      <SectionTitle icon={Bell} title={`Notifications and recent activity (${events.length})`} />
+      <ul className="flex max-h-36 flex-col gap-1.5 overflow-y-auto text-sm">
+        {events.slice(0, 6).map((event, index) => (
+          <li
+            key={`${event.at}-${index}`}
+            className={event.level === 'warn' ? 'text-warning-fg' : 'text-text-2'}
+          >
+            <span className="mr-2 text-xs text-muted">
+              {new Date(event.at).toLocaleTimeString()}
+            </span>
+            {event.text}
+          </li>
+        ))}
+        {!events.length && <li className="text-text-2">No notifications yet.</li>}
+      </ul>
+    </Panel>
   );
 }
 
@@ -820,23 +853,6 @@ export function LiveZonesPanel({ live, now }: { live: LiveLab; now: number }) {
           </ul>
         </div>
       )}
-
-      <details className="rounded-xl border border-border px-3 py-2 text-sm">
-        <summary className="cursor-pointer font-medium text-text">
-          Recent messages and events ({state?.events.length ?? 0})
-        </summary>
-        <ul className="mt-2 flex max-h-56 flex-col gap-1 overflow-y-auto text-xs">
-          {(state?.events ?? []).map((e, i) => (
-            <li
-              key={`${e.at}-${i}`}
-              className={e.level === 'warn' ? 'text-warning-fg' : 'text-text-2'}
-            >
-              <span className="text-muted">{new Date(e.at).toLocaleTimeString()}</span> {e.text}
-            </li>
-          ))}
-          {!state?.events.length && <li className="text-muted">Nothing received yet.</li>}
-        </ul>
-      </details>
 
       {adding && <AddZoneDialog key={adding} live={live} onClose={() => setAdding(null)} />}
       {editZone && <SettingsDialog zone={editZone} live={live} onClose={() => setEditing(null)} />}
