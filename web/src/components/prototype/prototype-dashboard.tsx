@@ -192,7 +192,6 @@ export function PrototypeDashboard() {
             </Button>
             <Button variant="outline" size="sm" onClick={() => setProfileOpen(true)}>
               <UserRound aria-hidden="true" />
-              Profile
             </Button>
           </div>
         </div>

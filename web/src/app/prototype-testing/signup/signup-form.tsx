@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { BrandMark } from '@/components/brand';
+import { AuthVideoBackground } from '@/components/prototype/auth-video-background';
+import { GoogleAuthButton } from '@/components/prototype/google-auth-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/ui/label';
@@ -9,7 +11,8 @@ import { Field } from '@/components/ui/label';
 export function PrototypeSignupForm() {
   return (
     <main className="proto-auth-bg relative grid min-h-dvh place-items-center px-4 py-10">
-      <div className="relative w-full max-w-sm">
+      <AuthVideoBackground />
+      <div className="proto-auth-content relative z-10 w-full max-w-sm">
         <div className="mb-6 flex justify-center">
           <BrandMark className="size-24 rounded-3xl bg-white/95 p-3 shadow-xl" priority />
         </div>
@@ -36,6 +39,16 @@ export function PrototypeSignupForm() {
             <Button type="button" size="lg" disabled className="w-full">
               Sign-up unavailable
             </Button>
+
+            <div className="flex items-center gap-3 text-xs text-text-2" aria-hidden="true">
+              <span className="h-px flex-1 bg-border" />
+              <span>OR</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <GoogleAuthButton onClick={() => window.alert('Google sign-up is not configured for this prototype yet.')}>
+              Sign up with Google
+            </GoogleAuthButton>
           </form>
 
           <p className="mt-4 text-center text-sm text-text-2">

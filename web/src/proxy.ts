@@ -7,6 +7,7 @@ function contentSecurityPolicy(nonce: string): string {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ''}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
+    "media-src 'self' https://res.cloudinary.com",
     "font-src 'self'",
     "connect-src 'self' ws: wss:",
     "object-src 'none'",
